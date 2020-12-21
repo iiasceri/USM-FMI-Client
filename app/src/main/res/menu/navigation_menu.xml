@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single" android:id="@+id/menu_top">
+        <item android:title="Studenti">
+            <menu>
+                <item
+                    android:id="@+id/navigation_schedule"
+                    android:icon="@drawable/ic_schedule_black_24dp"
+                    android:title="@string/schedule" />
+
+                <item
+                    android:id="@+id/navigation_schedule_exams"
+                    android:icon="@drawable/ic_av_timer_black_24dp"
+                    android:title="@string/schedule_exams" />
+                <item
+                    android:id="@+id/navigation_marks"
+                    android:icon="@drawable/ic_sentiment_very_satisfied_black_24dp"
+                    android:title="@string/semestrial_marks" />
+
+                <!--<item-->
+                    <!--android:id="@+id/navigation_defend_diploma"-->
+                    <!--android:icon="@drawable/ic_school_black_24dp"-->
+                    <!--android:title="@string/diploma_exams"/>-->
+
+                <!--<item-->
+                    <!--android:id="@+id/navigation_academic_calendar"-->
+                    <!--android:icon="@drawable/ic_date_range_black_24dp"-->
+                    <!--android:title="@string/academic_calendar"/>-->
+            </menu>
+        </item>
+
+    </group>
+
+    <group android:id="@+id/menu_bottom" android:checkableBehavior="single">
+
+            <!--<item-->
+                <!--android:title="@string/messages"-->
+                <!--android:icon="@drawable/ic_message_black_24dp"-->
+                <!--android:id="@+id/nav_subheader_messages"/>-->
+
+            <!--<item-->
+                <!--android:title="@string/lessons"-->
+                <!--android:icon="@drawable/ic_view_headline_black_24dp"-->
+                <!--android:id="@+id/nav_subheadr_lessons"/>-->
+
+            <item
+                android:title="@string/settings"
+                android:icon="@drawable/ic_settings_black_24dp"
+                android:id="@+id/nav_subheader_settings"/>
+            <item
+                android:title="@string/logout"
+                android:icon="@drawable/ic_exit_to_app_black_24dp"
+                android:id="@+id/nav_subheader_logout"/>
+
+    </group>
+</menu>

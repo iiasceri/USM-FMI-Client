@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/layoutRegister"
+    android:background="@color/loginBackground"
+    tools:context=".View.RegisterActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:id="@+id/scrollView">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/fmi_logo_view_login"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:contentDescription="@string/faculty_logo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/usm_white_450x455" />
+
+            <com.github.florent37.materialtextfield.MaterialTextField
+                android:id="@+id/usernameMaterialTextFieldRegister"
+                android:layout_width="320dp"
+                android:layout_height="80dp"
+                app:layout_constraintBottom_toTopOf="@+id/mailEditTextRegister"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:mtf_image="@drawable/ic_text_format_black_24dp"
+                app:mtf_labelColor="#e0ffffff"
+                app:mtf_openKeyboardOnFocus="true">
+
+                <EditText
+                    android:id="@+id/usernameEditTextRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/register_username"
+                    android:inputType="text"
+                    android:textColor="#000000"
+                    android:textSize="17sp" />
+
+            </com.github.florent37.materialtextfield.MaterialTextField>
+
+            <com.github.florent37.materialtextfield.MaterialTextField
+                android:id="@+id/mailMaterialTextFieldRegister"
+                android:layout_width="320dp"
+                android:layout_height="80dp"
+                app:layout_constraintBottom_toTopOf="@+id/familynameMaterialTextFieldRegister"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:mtf_image="@drawable/ic_mail_gray_24dp"
+                app:mtf_labelColor="#e0ffffff"
+                app:mtf_openKeyboardOnFocus="true">
+
+                <EditText
+                    android:id="@+id/mailEditTextRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/mail"
+                    android:inputType="text"
+                    android:textColor="#000000"
+                    android:textSize="17sp" />
+
+            </com.github.florent37.materialtextfield.MaterialTextField>
+
+            <com.github.florent37.materialtextfield.MaterialTextField
+                android:id="@+id/familynameMaterialTextFieldRegister"
+                android:layout_width="320dp"
+                android:layout_height="80dp"
+                app:layout_constraintBottom_toTopOf="@+id/passwordMaterialTextFieldRegister"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:mtf_image="@drawable/ic_text_format_black_24dp"
+                app:mtf_labelColor="#e0ffffff"
+                app:mtf_openKeyboardOnFocus="true">
+
+                <EditText
+                    android:id="@+id/familynameEditTextRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/register_familyname"
+                    android:inputType="text"
+                    android:textColor="#000000"
+                    android:textSize="17sp" />
+
+            </com.github.florent37.materialtextfield.MaterialTextField>
+            <com.github.florent37.materialtextfield.MaterialTextField
+                android:id="@+id/passwordMaterialTextFieldRegister"
+                android:layout_width="320dp"
+                android:layout_height="80dp"
+                app:layout_constraintBottom_toTopOf="@+id/confirmPasswordMaterialTextFieldRegister"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:mtf_image="@drawable/ic_vpn_key_black_24dp"
+                app:mtf_labelColor="#e0ffffff"
+                app:mtf_openKeyboardOnFocus="true">
+
+                <EditText
+                    android:id="@+id/passwordEditTextRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
+                    android:textColor="#000000"
+                    android:textSize="17sp" />
+
+            </com.github.florent37.materialtextfield.MaterialTextField>
+
+            <com.github.florent37.materialtextfield.MaterialTextField
+                android:id="@+id/confirmPasswordMaterialTextFieldRegister"
+                android:layout_width="320dp"
+                android:layout_height="80dp"
+                android:layout_marginBottom="20dp"
+                app:layout_constraintBottom_toTopOf="@+id/genderRadioGroup"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:mtf_image="@drawable/ic_vpn_key_black_24dp"
+                app:mtf_labelColor="#e0ffffff"
+                app:mtf_openKeyboardOnFocus="true">
+
+                <EditText
+                    android:id="@+id/confirmPasswordEditTextRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/confirm_password"
+                    android:inputType="textPassword"
+                    android:textColor="#000000"
+                    android:textSize="17sp" />
+
+            </com.github.florent37.materialtextfield.MaterialTextField>
+
+            <RadioGroup
+                android:id="@+id/genderRadioGroup"
+                android:layout_width="250dp"
+                android:layout_height="80dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toTopOf="@+id/groupSpinner"
+                android:layout_marginTop="-30dp"
+                android:layout_marginBottom="-20dp"
+                >
+
+                <RadioButton
+                    android:id="@+id/radioButtonMale"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableRight="@drawable/male_user"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5" />
+
+                <RadioButton
+                    android:id="@+id/radioButtonFemale"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableRight="@drawable/female_user"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/groupSubGroupTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/register_group"
+                android:textColor="#FFFFFF"
+                android:textSize="20dp"
+                android:layout_marginBottom="5dp"/>
+
+            <com.jaredrummler.materialspinner.MaterialSpinner
+                android:id="@+id/groupSpinner"
+                android:layout_width="180dp"
+                app:layout_constraintBottom_toTopOf="@+id/subGroupSpinner"
+                android:layout_height="45dp"/>
+
+            <com.jaredrummler.materialspinner.MaterialSpinner
+                android:id="@+id/subGroupSpinner"
+                android:layout_marginTop="5dp"
+                android:layout_width="150dp"
+                app:layout_constraintBottom_toTopOf="@+id/registerButton"
+                android:layout_height="45dp"
+                android:layout_marginBottom="10dp"/>
+
+            <com.marozzi.roundbutton.RoundButton
+                android:id="@+id/registerButton"
+                android:layout_width="271dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="@string/register_button2"
+                android:textAppearance="@android:style/TextAppearance.Widget.DropDownHint"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.51"
+                app:layout_constraintStart_toStartOf="parent"
+                app:rb_animation_alpha="true"
+                app:rb_animation_corner_radius="25dp"
+                app:rb_animation_duration="150"
+                app:rb_animation_progress_color="#7dec89"
+                app:rb_animation_progress_padding="4dp"
+                app:rb_animation_progress_width="2dp"
+                app:rb_background_color="#388e43"
+                app:rb_background_color_pressed="#1b7325"
+                app:rb_corner_color="#79b77e"
+                app:rb_corner_color_pressed="#00a63030"
+                app:rb_corner_radius="28dp"
+                app:rb_corner_width="1dp"
+                app:rb_text_color="#e9e9e9"
+                app:rb_text_color_pressed="#ffffff" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">USM - FMI</string>
+    <string name="send_feedback">Trimite Feedback</string>
+    <string name="about">Detalii aplicație</string>
+    <string name="my_image">my_image</string>
+    <string name="my_name">Nume Prenume</string>
+    <string name="my_mail">np@gmail.com</string>
+    <string name="schedule">Orar</string>
+    <string name="schedule_exams">Orar sesiune</string>
+    <string name="diploma_exams">Examene de licență</string>
+    <string name="academic_calendar">Calendar Academic</string>
+    <string name="messages">Mesaje</string>
+    <string name="lessons">Discipline</string>
+    <string name="settings">Setări</string>
+    <string name="open_drawer">Open navigation drawer</string>
+    <string name="close_drawer">Close navigation drawer</string>
+    <string name="login_button1">Intră</string>
+    <string name="faculty_logo">Logoul FMI</string>
+    <string name="faculty_text1">Facultatea de Matematică</string>
+    <string name="faculty_text2">și Informatică</string>
+    <string name="login_button2">Confirmare</string>
+    <string name="register_button1">Înregistreazăte</string>
+    <string name="register_button2">Înregistrează-mă</string>
+    <string name="password">Parola (Obligatoriu)</string>
+    <string name="confirm_password">Confirmă parola (Obligatoriu)</string>
+    <string name="mail">Mail</string>
+    <string name="semestrial_marks">Note Semestriale</string>
+    <string name="logout">Delogare</string>
+    <string name="id_editText">IDNP</string>
+    <string name="saveRoundButton">Salvează IDNP</string>
+    <string name="register_username">Nume Utilizator (Obligatoriu)</string>
+    <string name="register_familyname">Nume Prenume</string>
+    <string name="register_group">Alegeți grupa și subgrupa</string>
+    <string name="change_server">Schimbă Serverul</string>
+    <string name="serverEditHint">Exemplu: 213.48.3.94</string>
+</resources>

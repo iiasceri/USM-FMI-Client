@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#00534a</color>
+    <color name="colorPrimaryDark">#003e36</color>
+    <color name="colorAccent">#10c75f</color>
+    <color name="loginBackground">#29A13F</color>
+    <color name="loginBackgroundDarker">#144527</color>
+
+    <!-- For pages of ViewPager -->
+    <color name="pageColor6">#003300</color>
+    <color name="pageColor5">#005005</color>
+    <color name="pageColor4">#00b248</color>
+    <color name="pageColor3">#00e676</color>
+    <color name="pageColor2">#469C75</color>
+    <color name="pageColor1">#20505F</color>
+
+    <color name="icon">#28a13e</color>
+</resources>
