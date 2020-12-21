@@ -23,8 +23,6 @@ import androidx.viewpager.widget.ViewPager;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.tabs.TabLayout;
@@ -33,6 +31,7 @@ import com.roger.catloadinglibrary.CatLoadingView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -42,6 +41,7 @@ import iiasceri.me.View.ToolbarActivity;
 
 public class ScheduleActivity extends ToolbarActivity {
 
+    private Boolean offlineMode = true;
     Toolbar toolbar;
     private RequestQueue mQueue;
     Calendar calendar = Calendar.getInstance();
@@ -51,7 +51,7 @@ public class ScheduleActivity extends ToolbarActivity {
     CatLoadingView mView;
 
     // Titles of the individual pages (displayed in tabs)
-    private final String[] PAGE_TITLES = new String[] {
+    private final String[] PAGE_TITLES = new String[]{
             "L",
             "M",
             "Mi",
@@ -61,7 +61,7 @@ public class ScheduleActivity extends ToolbarActivity {
     };
 
     // Încărcarea fragmentelor într-o listă
-    private final Fragment[] PAGES = new Fragment[] {
+    private final Fragment[] PAGES = new Fragment[]{
             new MondayFragment(),
             new TuesdayFragment(),
             new WednesdayFragment(),
@@ -134,7 +134,7 @@ public class ScheduleActivity extends ToolbarActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         // add back arrow to toolbar
-        if (getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
@@ -157,6 +157,10 @@ public class ScheduleActivity extends ToolbarActivity {
         JSONObject jo;
         try {
             jo = new JSONObject(mPrefs.getString("User", ""));
+            if (offlineMode) {
+                jsonGetSchedule(jo.getString("groupName"), "I");
+                return;
+            }
             mQueue = Volley.newRequestQueue(Objects.requireNonNull(getApplicationContext()));
             mQueue.start();
             mView = new CatLoadingView();
@@ -203,7 +207,21 @@ public class ScheduleActivity extends ToolbarActivity {
     }
 
     private void jsonGetSchedule(String groupName,
-                                 String subGroup) {
+                                 String subGroup) throws JSONException {
+        SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        if (offlineMode) {
+            String json = new JSONObject(new OfflineSchedule().getMySchedule(subGroup, "weekly", this)).getString("orar");
+
+            prefsEditor.putString("Schedule", json);
+            prefsEditor.apply();
+            mView.dismiss();
+            final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            final TabLayout tabLayout = findViewById(R.id.tab_layout_schedule);
+            Fragment currentFragment = PAGES[tabLayout.getSelectedTabPosition()];
+            ft.detach(currentFragment).attach(currentFragment).commit();
+            return;
+        }
 
         String url = Utilities.getServerURL(getApplicationContext()) +
                 "get_schedule?" +
@@ -214,42 +232,28 @@ public class ScheduleActivity extends ToolbarActivity {
         Log.i("URL", url);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
+                response -> {
+                    try {
+                        if (response.has("orar")) {
+                            String json = response.getString("orar");
 
-                        try {
-
-                            SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-
-                            if (response.has("orar")) {
-                                String json = response.getString("orar");
-
-                                prefsEditor.putString("Schedule", json);
-                                prefsEditor.apply();
-                                mView.dismiss();
-                                final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                                final TabLayout tabLayout = findViewById(R.id.tab_layout_schedule);
-                                Fragment currentFragment = PAGES[tabLayout.getSelectedTabPosition()];
-                                ft.detach(currentFragment).attach(currentFragment).commit();
-                            }
-                            else {
-                                showAlert();
-                            }
-
-                        } catch (JSONException e) {
+                            prefsEditor.putString("Schedule", json);
+                            prefsEditor.apply();
+                            mView.dismiss();
+                            final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                            final TabLayout tabLayout = findViewById(R.id.tab_layout_schedule);
+                            Fragment currentFragment = PAGES[tabLayout.getSelectedTabPosition()];
+                            ft.detach(currentFragment).attach(currentFragment).commit();
+                        } else {
                             showAlert();
-                            e.printStackTrace();
                         }
+                    } catch (JSONException e) {
+                        showAlert();
+                        e.printStackTrace();
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                showAlert();
-                error.printStackTrace();
-            }
-
+                }, error -> {
+            showAlert();
+            error.printStackTrace();
         });
 
         request.setRetryPolicy(new DefaultRetryPolicy(
@@ -257,7 +261,6 @@ public class ScheduleActivity extends ToolbarActivity {
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mQueue.add(request);
-
     }
 
     void showAlert() {
