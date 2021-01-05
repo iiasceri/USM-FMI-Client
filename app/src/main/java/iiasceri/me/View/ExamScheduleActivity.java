@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -21,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.tabs.TabLayout;
 import com.roger.catloadinglibrary.CatLoadingView;
 
 import org.json.JSONArray;
@@ -34,12 +37,15 @@ import java.util.Objects;
 import iiasceri.me.Model.Pojo;
 import iiasceri.me.R;
 import iiasceri.me.Utilities.Utilities;
+import iiasceri.me.View.Schedule.OfflineSchedule;
 
 public class ExamScheduleActivity extends ToolbarActivity {
 
     private List<Object> mRecyclerViewItems = new ArrayList<>();
     private RequestQueue mQueue;
     CatLoadingView mView;
+    private Boolean offlineMode = true;
+
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -56,8 +62,10 @@ public class ExamScheduleActivity extends ToolbarActivity {
             jo = new JSONObject(mPrefs.getString("User", ""));
 
             if (!mPrefs.contains("ExamSchedule")) {
-                mView = new CatLoadingView();
-                mView.show(getSupportFragmentManager(), "");
+                if (!offlineMode) {
+                    mView = new CatLoadingView();
+                    mView.show(getSupportFragmentManager(), "");
+                }
                 jsonGetExamSchedule(jo.getString("groupName"), jo.getString("subGroup"));
             }
             else
@@ -78,7 +86,7 @@ public class ExamScheduleActivity extends ToolbarActivity {
         }
 
         TextView toolbarTitle = toolbar.findViewById(R.id.toolbar_title);
-        toolbarTitle.setText("Succese La Examene!");
+        toolbarTitle.setText("Have fun during exams!");
 
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -148,7 +156,15 @@ public class ExamScheduleActivity extends ToolbarActivity {
 
 
     private void jsonGetExamSchedule(String groupName,
-                                     String subGroup) {
+                                     String subGroup) throws JSONException {
+        SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        if (offlineMode) {
+            String json = new JSONObject(new OfflineSchedule().getMySchedule(subGroup, "exam", this)).getString("orar");
+            prefsEditor.putString("ExamSchedule", json);
+            prefsEditor.apply();
+            return;
+        }
 
         String url = Utilities.getServerURL(getApplicationContext()) +
                 "get_schedule?" +
@@ -159,44 +175,29 @@ public class ExamScheduleActivity extends ToolbarActivity {
         Log.i("URL", url);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
+                response -> {
+                    try {
+                        if (response.has("orar")) {
+                            Log.i("exam schedule", response.getString("orar"));
+                            String json = response.getString("orar");
+                            prefsEditor.putString("ExamSchedule", json);
+                            prefsEditor.apply();
 
-                        try {
-
-                            SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-
-                            if (response.has("orar")) {
-
-                                Log.i("exam schedule", response.getString("orar"));
-
-                                String json = response.getString("orar");
-
-                                prefsEditor.putString("ExamSchedule", json);
-                                prefsEditor.apply();
-
-                                addMenuItemsFromJson();
-                                mView.dismiss();
-                            }
-                            else {
-                                showAlert();
-                            }
-
-                        } catch (JSONException e) {
-                            showAlert();
-                            e.printStackTrace();
+                            addMenuItemsFromJson();
+                            mView.dismiss();
                         }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                showAlert();
-                error.printStackTrace();
-            }
+                        else {
+                            showAlert();
+                        }
 
-        });
+                    } catch (JSONException e) {
+                        showAlert();
+                        e.printStackTrace();
+                    }
+                }, error -> {
+                    showAlert();
+                    error.printStackTrace();
+                });
 
         request.setRetryPolicy(new DefaultRetryPolicy(
                 DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 4,

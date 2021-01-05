@@ -52,12 +52,12 @@ public class ScheduleActivity extends ToolbarActivity {
 
     // Titles of the individual pages (displayed in tabs)
     private final String[] PAGE_TITLES = new String[]{
-            "L",
             "M",
-            "Mi",
-            "J",
-            "V",
-            "-"
+            "T",
+            "W",
+            "Th",
+            "Fr",
+            "~"
     };
 
     // Încărcarea fragmentelor într-o listă

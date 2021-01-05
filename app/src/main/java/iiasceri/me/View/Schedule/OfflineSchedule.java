@@ -25,10 +25,15 @@ public class OfflineSchedule {
     public String getMySchedule(String subGroup,
                                 String scheduleType, Context context) {
 
+        String fName = "ia1602weekly.json";
+
+        if (scheduleType.equals("exam"))
+            fName = "ia1602exam.json";
+
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = null;
         try {
-            inputStream = assetManager.open("ia1602weekly.json");
+            inputStream = assetManager.open(fName);
         }
         catch (IOException e){
             Log.e("message: ",e.getMessage());

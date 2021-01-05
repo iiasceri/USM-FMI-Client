@@ -48,10 +48,10 @@
                 android:title="@string/settings"
                 android:icon="@drawable/ic_settings_black_24dp"
                 android:id="@+id/nav_subheader_settings"/>
-            <item
-                android:title="@string/logout"
-                android:icon="@drawable/ic_exit_to_app_black_24dp"
-                android:id="@+id/nav_subheader_logout"/>
+<!--            <item-->
+<!--                android:title="@string/logout"-->
+<!--                android:icon="@drawable/ic_exit_to_app_black_24dp"-->
+<!--                android:id="@+id/nav_subheader_logout"/>-->
 
     </group>
 </menu>

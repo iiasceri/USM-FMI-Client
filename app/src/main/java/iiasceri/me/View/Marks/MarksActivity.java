@@ -10,7 +10,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -32,7 +32,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.roger.catloadinglibrary.CatLoadingView;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Objects;
 
@@ -46,20 +45,21 @@ public class MarksActivity extends ToolbarActivity {
     Toolbar toolbar;
     private RequestQueue mQueue;
     CatLoadingView mView;
+    Boolean offlineMode = true;
 
     // Titles of the individual pages (displayed in tabs)
-    private final String[] PAGE_TITLES = new String[] {
+    private final String[] PAGE_TITLES = new String[]{
             "1",
             "2",
             "3",
             "4",
             "5",
             "6",
-            "Medii"
+            "~"
     };
 
     // The fragments that are used as the individual pages
-    private final Fragment[] PAGES = new Fragment[] {
+    private final Fragment[] PAGES = new Fragment[]{
             new S1Fragment(),
             new S2Fragment(),
             new S3Fragment(),
@@ -82,8 +82,7 @@ public class MarksActivity extends ToolbarActivity {
         if (!mPrefs.contains("ID")) {
             final Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(intent);
-        }
-        else {
+        } else {
             // Set the Toolbar as the activity's app bar (instead of the default ActionBar)
             //[1]vert + Toolbar
             toolbar = findViewById(R.id.toolbar);
@@ -91,7 +90,7 @@ public class MarksActivity extends ToolbarActivity {
             Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
             // add back arrow to toolbar
-            if (getSupportActionBar() != null){
+            if (getSupportActionBar() != null) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setDisplayShowHomeEnabled(true);
             }
@@ -100,21 +99,17 @@ public class MarksActivity extends ToolbarActivity {
             // (fragments) to the ViewPager, which the ViewPager needs to display.
             // The ViewPager is responsible for sliding pages (fragments) in and out upon user input
             mViewPager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
-            mViewPager.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_MOVE:
-                            pullToRefresh.setEnabled(false);
-                            break;
-                        case MotionEvent.ACTION_UP:
-                        case MotionEvent.ACTION_CANCEL:
-                            pullToRefresh.setEnabled(true);
-                            break;
-                    }
-                    return false;
+            mViewPager.setOnTouchListener((v, event) -> {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_MOVE:
+                        pullToRefresh.setEnabled(false);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        pullToRefresh.setEnabled(true);
+                        break;
                 }
+                return false;
             });
 
             // Connect the tabs with the ViewPager (the setupWithViewPager method does this for us in
@@ -142,9 +137,11 @@ public class MarksActivity extends ToolbarActivity {
         mQueue = Volley.newRequestQueue(this);
         mQueue.start();
         //start anim
-        mView = new CatLoadingView();
-        mView.show(getSupportFragmentManager(), "");
-        mView.setCanceledOnTouchOutside(false);
+        if (!offlineMode) {
+            mView = new CatLoadingView();
+            mView.show(getSupportFragmentManager(), "");
+            mView.setCanceledOnTouchOutside(false);
+        }
         jsonGetMarks(mPrefs.getString("ID", ""));
     }
 
@@ -183,6 +180,12 @@ public class MarksActivity extends ToolbarActivity {
     }
 
     private void jsonGetMarks(String idnp) {
+        SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        if (offlineMode) {
+            Toast.makeText(this, "Currently offline", Toast.LENGTH_LONG).show();
+            finish();
+        }
 
         String url = Utilities.getServerURL(getApplicationContext()) +
                 "get_marks?" +
@@ -191,40 +194,31 @@ public class MarksActivity extends ToolbarActivity {
         Log.i("URL", url);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, null,
-                new Response.Listener<JSONObject>() {
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onResponse(JSONObject response) {
+                response -> {
+                    try {
 
-                        try {
+                        if (response.has("semestre")) {
+                            String json = response.getString("semestre");
 
-                            SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                            prefsEditor.putString("Marks", json);
+                            prefsEditor.apply();
 
-                            if (response.has("semestre")) {
-                                String json = response.getString("semestre");
-
-                                prefsEditor.putString("Marks", json);
-                                prefsEditor.apply();
-
-                                final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                                final TabLayout tabLayout = findViewById(R.id.tab_layout_marks);
-                                Fragment currentFragment = PAGES[tabLayout.getSelectedTabPosition()];
-                                if (tabLayout.getSelectedTabPosition() > 0) {
-                                    Fragment currentFragmentPrev = PAGES[tabLayout.getSelectedTabPosition() - 1];
-                                    ft.detach(currentFragmentPrev).attach(currentFragmentPrev);
-                                }
-                                ft.detach(currentFragment).attach(currentFragment).commit();
-                                mView.dismiss();
+                            final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                            final TabLayout tabLayout = findViewById(R.id.tab_layout_marks);
+                            Fragment currentFragment = PAGES[tabLayout.getSelectedTabPosition()];
+                            if (tabLayout.getSelectedTabPosition() > 0) {
+                                Fragment currentFragmentPrev = PAGES[tabLayout.getSelectedTabPosition() - 1];
+                                ft.detach(currentFragmentPrev).attach(currentFragmentPrev);
                             }
-                            else {
-                                showAlert();
-                            }
-
-                        } catch (JSONException e) {
+                            ft.detach(currentFragment).attach(currentFragment).commit();
+                            mView.dismiss();
+                        } else {
                             showAlert();
-                            e.printStackTrace();
                         }
+
+                    } catch (JSONException e) {
+                        showAlert();
+                        e.printStackTrace();
                     }
                 }, new Response.ErrorListener() {
             @Override

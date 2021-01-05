@@ -1,7 +1,10 @@
 package iiasceri.me.View;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +13,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.DownloadListener;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
@@ -44,6 +48,7 @@ public class MainActivity extends ToolbarActivity implements NavigationView.OnNa
     DrawerLayout drawerLayout;
     NavigationView navigationView;
 
+    @SuppressLint({"SetJavaScriptEnabled", "UseCompatLoadingForDrawables"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,19 +67,24 @@ public class MainActivity extends ToolbarActivity implements NavigationView.OnNa
         drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
-        View hView =  navigationView.getHeaderView(0);
+        View hView = navigationView.getHeaderView(0);
         TextView nameTextView = hView.findViewById(R.id.nameTextViewDrawer);
         ImageView genderImageView = hView.findViewById(R.id.genderImageViewDrawer);
 
         SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+
+        String json = "{\"username\":\"Linda\",\"mail\":\"example@mail.com\",\"familyName\":\"Fiblind\",\"gender\":\"female\",\"groupName\":\"IA1602\",\"subGroup\":\"I\"}";
+
+        prefsEditor.putString("User", json);
 
         JSONObject obj;
-        String name = "Linda Figlind";
+        String name = "Linda Fiblind";
         String gender = "";
 
         try {
-            String json = mPrefs.getString("User", "");
-            obj = new JSONObject(json);
+            String userJSON = mPrefs.getString("User", "");
+            obj = new JSONObject(userJSON);
             name = obj.getString("familyName");
             gender = obj.getString("gender");
 
@@ -83,6 +93,9 @@ public class MainActivity extends ToolbarActivity implements NavigationView.OnNa
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        name = "Linda Fiblind";
+        gender = "female";
 
         nameTextView.setText(name);
         if (gender.equals("male"))
@@ -97,27 +110,27 @@ public class MainActivity extends ToolbarActivity implements NavigationView.OnNa
         //[3]browser
         WebView webView = findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getPath());
+        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         webView.setWebViewClient(new WebViewClient());
-        webView.setDownloadListener(new DownloadListener() {
-            public void onDownloadStart(String url, String userAgent,
-                                        String contentDisposition,
-                                        String mimetype,
-                                        long contentLength) {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                startActivity(i);
-            }
+
+        //URL gir "....."
+        webView.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
         });
         if (Utilities.checkConnection(getApplicationContext())) {
-            webView.loadUrl("http://fmi.usm.md");
+            webView.loadUrl("http://fmi.usm.md/en");
 //            SharedPreferences.Editor prefsEditor = mPrefs.edit();
 //            prefsEditor.putString("WebViewWasLoaded", "yes");
 //            prefsEditor.apply();
         } else {
 
 //            if (!mPrefs.contains("WebViewWasLoaded")) {
-                t4.setAlpha(1f);
-                t5.setAlpha(1f);
+            t4.setAlpha(1f);
+            t5.setAlpha(1f);
 //            }
 
             Snackbar.make(findViewById(R.id.layoutMain), "Verificati Conexiunea La Internet Pentru a Putea Inoi Datele! (Nu e obligatoriu daca deja le-ati descarcat)", Snackbar.LENGTH_LONG).show();
@@ -175,7 +188,6 @@ public class MainActivity extends ToolbarActivity implements NavigationView.OnNa
         profList.add("G.Marin");
         JSONArray proffessorsJsonArray = new JSONArray(profList);
 
-        SharedPreferences.Editor prefsEditor = mPrefs.edit();
         prefsEditor.putString("Professors", proffessorsJsonArray.toString());
         prefsEditor.putString("PhoneByName", jsonDetailsPhone.toString());
         prefsEditor.putString("MailByName", jsonDetailsMail.toString());
@@ -204,8 +216,7 @@ public class MainActivity extends ToolbarActivity implements NavigationView.OnNa
         if (id == R.id.nav_subheader_settings) {
             Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(intent);
-        }
-        else if (id == R.id.navigation_schedule) {
+        } else if (id == R.id.navigation_schedule) {
 //            Toast.makeText(getApplicationContext(), "Schedule", Toast.LENGTH_SHORT).show();
             MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.orarhh);
             mediaPlayer.start();
@@ -216,27 +227,26 @@ public class MainActivity extends ToolbarActivity implements NavigationView.OnNa
         if (id == R.id.navigation_schedule_exams) {
             Intent intent = new Intent(getApplicationContext(), ExamScheduleActivity.class);
             startActivity(intent);
-        }
-        else if (id == R.id.navigation_marks) {
+        } else if (id == R.id.navigation_marks) {
             Intent intent = new Intent(getApplicationContext(), MarksActivity.class);
             startActivity(intent);
         }
 //        else if (id == R.id.nav_subheader_messages) {
 //            Toast.makeText(getApplicationContext(), "Messages", Toast.LENGTH_SHORT).show();
 //        }
-        else if (id == R.id.nav_subheader_logout) {
-            SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-            prefsEditor.remove("User");
-            prefsEditor.remove("ExamSchedule");
-            prefsEditor.remove("Schedule");
-            prefsEditor.remove("ID");
-            prefsEditor.remove("Marks");
-            prefsEditor.apply();
-
-            Intent intent = new Intent(getApplicationContext(), LoginRegisterActivity.class);
-                startActivity(intent);
-        }
+//        else if (id == R.id.nav_subheader_logout) {
+//            SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+//            prefsEditor.remove("User");
+//            prefsEditor.remove("ExamSchedule");
+//            prefsEditor.remove("Schedule");
+//            prefsEditor.remove("ID");
+//            prefsEditor.remove("Marks");
+//            prefsEditor.apply();
+//
+//            Intent intent = new Intent(getApplicationContext(), LoginRegisterActivity.class);
+//            startActivity(intent);
+//        }
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return false;
