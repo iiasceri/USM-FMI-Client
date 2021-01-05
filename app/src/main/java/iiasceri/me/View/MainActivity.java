@@ -218,8 +218,8 @@ public class MainActivity extends ToolbarActivity implements NavigationView.OnNa
             startActivity(intent);
         } else if (id == R.id.navigation_schedule) {
 //            Toast.makeText(getApplicationContext(), "Schedule", Toast.LENGTH_SHORT).show();
-            MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.orarhh);
-            mediaPlayer.start();
+//            MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.orarhh);
+//            mediaPlayer.start();
 
             Intent intent = new Intent(getApplicationContext(), ScheduleActivity.class);
             startActivity(intent);

@@ -8,8 +8,6 @@
     android:background="@color/loginBackground"
     tools:context=".View.LoginRegisterActivity">
 
-
-
     <TextView
         android:id="@+id/textView"
         style="@android:style/TextAppearance.DeviceDefault.Medium"

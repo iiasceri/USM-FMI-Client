@@ -38,20 +38,20 @@ public abstract class ToolbarActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.menu_feedback) {
-            Toast.makeText(getApplicationContext(), "Mulțumesc ;)", Toast.LENGTH_SHORT).show();
-            MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.yea_boii);
-            mediaPlayer.start();
-        }
+//        if (id == R.id.menu_feedback) {
+//            Toast.makeText(getApplicationContext(), "Thanks ;)", Toast.LENGTH_SHORT).show();
+//            MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.yea_boii);
+//            mediaPlayer.start();
+//        }
         if (id == R.id.menu_about) {
             AlertDialog alertDialog;
             AlertDialog.Builder builder;
             builder = new AlertDialog.Builder(ToolbarActivity.this);
-            builder.setTitle("Detalii Aplicație");
+            builder.setTitle("App Details");
             builder.setMessage( ""
-                                + "\nAutor: Iașcerinschi Ion"
-                                + "\nVersiune: 2.23");
-            builder.setPositiveButton("Înapoi", new DialogInterface.OnClickListener() {
+                                + "\nAuthor: Iascerinschi Ion"
+                                + "\nVersion: 2.0 Offline");
+            builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                 }

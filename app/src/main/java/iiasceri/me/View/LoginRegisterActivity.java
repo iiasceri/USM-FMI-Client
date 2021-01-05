@@ -89,7 +89,7 @@ public class LoginRegisterActivity extends ToolbarActivity {
                             prefsEditor.apply();
                         }
                     });
-                    builder.setNegativeButton("Înapoi", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 

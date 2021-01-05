@@ -5,7 +5,12 @@ plugins {
 android {
     compileSdkVersion 28
     buildToolsVersion "30.0.2"
-
+    lintOptions {
+//        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
     defaultConfig {
         applicationId "iiasceri.me"
         minSdkVersion 23
