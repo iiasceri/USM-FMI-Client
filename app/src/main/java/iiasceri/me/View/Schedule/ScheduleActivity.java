@@ -2,6 +2,7 @@ package iiasceri.me.View.Schedule;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -37,6 +38,7 @@ import java.util.Objects;
 
 import iiasceri.me.R;
 import iiasceri.me.Utilities.Utilities;
+import iiasceri.me.View.MainActivity;
 import iiasceri.me.View.ToolbarActivity;
 
 public class ScheduleActivity extends ToolbarActivity {
@@ -163,8 +165,10 @@ public class ScheduleActivity extends ToolbarActivity {
             }
             mQueue = Volley.newRequestQueue(Objects.requireNonNull(getApplicationContext()));
             mQueue.start();
-            mView = new CatLoadingView();
-            mView.show(getSupportFragmentManager(), "");
+            if (!offlineMode) {
+                mView = new CatLoadingView();
+                mView.show(getSupportFragmentManager(), "");
+            }
             jsonGetSchedule(jo.getString("groupName"), jo.getString("subGroup"));
 
         } catch (JSONException e) {
@@ -215,11 +219,9 @@ public class ScheduleActivity extends ToolbarActivity {
 
             prefsEditor.putString("Schedule", json);
             prefsEditor.apply();
-            mView.dismiss();
-            final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            final TabLayout tabLayout = findViewById(R.id.tab_layout_schedule);
-            Fragment currentFragment = PAGES[tabLayout.getSelectedTabPosition()];
-            ft.detach(currentFragment).attach(currentFragment).commit();
+            Intent intent = new Intent(getApplicationContext(), ScheduleActivity.class);
+            finish();
+            startActivity(intent);
             return;
         }
 
